@@ -69,13 +69,10 @@ public class ChunkHandling : MonoBehaviour
 
     private void DeleteDrawables()
     {
-        if(this.gameObject.transform.childCount > 0)
+        int childCount = gameObject.transform.childCount;
+        for(int childIndex = 0; childIndex < childCount; childIndex++)
         {
-            int childCount = gameObject.transform.childCount;
-            for(int childIndex = 0; childIndex < childCount; childIndex++)
-            {
-                Destroy(this.gameObject.transform.GetChild(childIndex));
-            }
+            Destroy(this.gameObject.transform.GetChild(childIndex).gameObject);
         }
     }
 
@@ -93,6 +90,7 @@ public class ChunkHandling : MonoBehaviour
             #region CreateBasePlane
             GameObject thisChunk = GameObject.CreatePrimitive(PrimitiveType.Plane);
             thisChunk.name = "chunk_" + chunkIndex;
+            chunks.Where(x=>x == nextChunk).FirstOrDefault().ChunkIdentifier = "chunk_" + chunkIndex;
             Material groundMat;
             if(nextChunk.IsUnlocked == true)
             {
@@ -108,23 +106,28 @@ public class ChunkHandling : MonoBehaviour
             #endregion
 
             #region PopulatePlaneWithObjects
-            int objectIndex = 0;
-            foreach(ChunkObjectModel nextObject in nextChunk.ChunkObjects)
+            
+            if(nextChunk.IsUnlocked == true)
             {
-                string objectNamePrefix = "object_";
-                // need to think about offsetting the trees, the position inside the tree object is meant as an "on the chunk postion, where the 0,0,0 is the middle of each chunk" => therefore need to consider the chunks world space postion :)
-
-                switch(nextObject.ObjectType)
+                int objectIndex = 0;
+                foreach (ChunkObjectModel nextObject in nextChunk.ChunkObjects)
                 {
-                    case ChunkObjectType.TREE:
-                        Vector3 treePos = new Vector3(nextChunk.Position.x + nextObject.Position.x, nextChunk.Position.y + nextObject.Position.y, nextChunk.Position.z + nextObject.Position.z);
-                        GameObject newTree = Instantiate(prefabs.Where(x => x.name == "Tree2").FirstOrDefault(), treePos, Quaternion.identity);
-                        newTree.transform.parent = thisChunk.transform;
-                        newTree.name = objectNamePrefix + "tree_" + objectIndex;
-                        break;
+                    string objectNamePrefix = "object_";
+                    // need to think about offsetting the trees, the position inside the tree object is meant as an "on the chunk postion, where the 0,0,0 is the middle of each chunk" => therefore need to consider the chunks world space postion :)
+
+                    switch (nextObject.ObjectType)
+                    {
+                        case ChunkObjectType.TREE:
+                            Vector3 treePos = new Vector3(nextChunk.Position.x + nextObject.Position.x, nextChunk.Position.y + nextObject.Position.y, nextChunk.Position.z + nextObject.Position.z);
+                            GameObject newTree = Instantiate(prefabs.Where(x => x.name == "Tree2").FirstOrDefault(), treePos, Quaternion.identity);
+                            newTree.transform.parent = thisChunk.transform;
+                            newTree.name = objectNamePrefix + "tree_" + objectIndex;
+                            break;
+                    }
+                    objectIndex++;
                 }
-                objectIndex++;
             }
+            
             #endregion
 
 
@@ -133,6 +136,22 @@ public class ChunkHandling : MonoBehaviour
 
         
 
+    }
+
+    public void GetChunk(string touchedChunk)
+    {
+        foreach(ChunkModel chunk in chunks)
+        {
+            Debug.Log("searching chunk...");
+            if (chunk.ChunkIdentifier == touchedChunk)
+            {
+                Debug.Log("Chunk found!");
+                chunks.Where(x => x == chunk).FirstOrDefault().IsUnlocked = true;
+                DeleteDrawables();
+                RefreshDrawables();
+
+            }
+        }
     }
 
 }

@@ -13,6 +13,7 @@ namespace Assets.Scripts.Models
         public Vector3 Position { get; set; } = new Vector3();
         private List<ChunkObjectModel> chunkObjects = new List<ChunkObjectModel>();
         private bool isUnlocked = false;
+        public string ChunkIdentifier = "";
 
         
         public bool IsUnlocked
@@ -20,6 +21,10 @@ namespace Assets.Scripts.Models
             get
             {
                 return isUnlocked;
+            }
+            set
+            {
+                isUnlocked = value;
             }
         }
 
@@ -49,11 +54,6 @@ namespace Assets.Scripts.Models
 
             
 
-
-        }
-
-        private void Start()
-        {
 
         }
 
