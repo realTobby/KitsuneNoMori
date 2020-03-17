@@ -140,6 +140,10 @@ public class ChunkHandling : MonoBehaviour
 
     public void GetChunk(string touchedChunk)
     {
+        DeleteDrawables();
+
+        List<ChunkModel> chunksToBuildArround = new List<ChunkModel>();
+
         foreach(ChunkModel chunk in chunks)
         {
             if (chunk.ChunkIdentifier == touchedChunk)
@@ -147,10 +151,58 @@ public class ChunkHandling : MonoBehaviour
                 if(chunk.IsUnlocked == false)
                 {
                     chunks.Where(x => x == chunk).FirstOrDefault().IsUnlocked = true;
-                    DeleteDrawables();
-                    RefreshDrawables();
+                    chunksToBuildArround.Add(chunk);
+                    break;
                 }
             }
+        }
+
+        if(chunksToBuildArround.Count != 0)
+        {
+            chunks.RemoveAll(chunk => chunk.IsUnlocked == false);
+        }
+        
+
+
+        foreach(ChunkModel centerChunk in chunksToBuildArround)
+        {
+            BuildChunksArround(centerChunk);
+        }
+
+        
+        RefreshDrawables();
+    }
+    
+    private void BuildChunksArround(ChunkModel centerChunk)
+    {
+        Vector3 centerChunkPosition = centerChunk.Position;
+
+        Vector3 leftChunkPosition = new Vector3(centerChunkPosition.x - 10, centerChunkPosition.y, centerChunkPosition.z);
+        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == leftChunkPosition) == false) // :) cool stuff
+        {
+            ChunkModel leftChunk = new ChunkModel(false, leftChunkPosition);
+            chunks.Add(leftChunk);
+        }
+
+        Vector3 rightChunkPosition = new Vector3(centerChunkPosition.x + 10, centerChunkPosition.y, centerChunkPosition.z);
+        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == rightChunkPosition) == false)
+        {
+            ChunkModel rightChunk = new ChunkModel(false, rightChunkPosition);
+            chunks.Add(rightChunk);
+        }
+
+        Vector3 topChunkPosition = new Vector3(centerChunkPosition.x, centerChunkPosition.y, centerChunkPosition.z + 10);
+        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == topChunkPosition) == false)
+        {
+            ChunkModel topChunk = new ChunkModel(false, topChunkPosition);
+            chunks.Add(topChunk);
+        }
+
+        Vector3 bottomChunkPosition = new Vector3(centerChunkPosition.x, centerChunkPosition.y, centerChunkPosition.z - 10);
+        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == bottomChunkPosition) == false)
+        {
+            ChunkModel bottomChunk = new ChunkModel(false, bottomChunkPosition);
+            chunks.Add(bottomChunk);
         }
     }
 

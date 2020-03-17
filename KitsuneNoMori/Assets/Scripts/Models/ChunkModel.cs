@@ -41,14 +41,14 @@ namespace Assets.Scripts.Models
             this.isUnlocked = isUnlocked;
             Position = position;
 
-            int treesCount = UnityEngine.Random.Range(15, 25);
+            int treesCount = UnityEngine.Random.Range(10, 25);
 
 
             for(int tree = 0; tree < treesCount; tree++)
             {
                 ChunkObjectModel newObject = new ChunkObjectModel();
                 newObject.ObjectType = ChunkObjectType.TREE;
-                newObject.Position = new Vector3(UnityEngine.Random.Range(-4f, 4f), 0, UnityEngine.Random.Range(-4f, 4f));
+                newObject.Position = new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
                 chunkObjects.Add(newObject);
             }
 
