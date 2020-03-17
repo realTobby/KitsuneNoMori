@@ -41,7 +41,7 @@ namespace Assets.Scripts.Models
             this.isUnlocked = isUnlocked;
             Position = position;
 
-            int treesCount = UnityEngine.Random.Range(3, 6);
+            int treesCount = UnityEngine.Random.Range(15, 25);
 
 
             for(int tree = 0; tree < treesCount; tree++)

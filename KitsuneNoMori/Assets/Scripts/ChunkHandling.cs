@@ -142,14 +142,14 @@ public class ChunkHandling : MonoBehaviour
     {
         foreach(ChunkModel chunk in chunks)
         {
-            Debug.Log("searching chunk...");
             if (chunk.ChunkIdentifier == touchedChunk)
             {
-                Debug.Log("Chunk found!");
-                chunks.Where(x => x == chunk).FirstOrDefault().IsUnlocked = true;
-                DeleteDrawables();
-                RefreshDrawables();
-
+                if(chunk.IsUnlocked == false)
+                {
+                    chunks.Where(x => x == chunk).FirstOrDefault().IsUnlocked = true;
+                    DeleteDrawables();
+                    RefreshDrawables();
+                }
             }
         }
     }
