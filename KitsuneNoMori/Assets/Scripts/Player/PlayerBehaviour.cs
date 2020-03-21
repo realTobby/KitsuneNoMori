@@ -14,14 +14,37 @@ public class PlayerBehaviour : MonoBehaviour
         chunkHandler = GameObject.FindGameObjectsWithTag("ChunkHandler")[0];
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // check if inside a chunk
 
+        if(Input.anyKeyDown)
+        {
+            int horizontalIn = (int)Input.GetAxisRaw("Horizontal");
+            int verticalIn = (int)Input.GetAxisRaw("Vertical");
+
+            if(horizontalIn != 0 || verticalIn != 0)
+            {
+                switch (horizontalIn)
+                {
+                    case 1:
+                        this.transform.rotation = Quaternion.Euler(0, 90, 0);
+                        break;
+                    case -1:
+                        this.transform.rotation = Quaternion.Euler(0, -90, 0);
+                        break;
+                }
+                switch (verticalIn)
+                {
+                    case 1:
+                        this.transform.rotation = Quaternion.Euler(0, 0, 0);
+                        break;
+                    case -1:
+                        this.transform.rotation = Quaternion.Euler(0, 180, 0);
+                        break;
+                }
+            }
+        }
         
-
-
 
     }
 
