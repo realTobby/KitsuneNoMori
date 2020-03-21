@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models;
+﻿using Assets.Scripts;
+using Assets.Scripts.Models;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,12 @@ public enum MaterialKeys
 
 public class ChunkHandling : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private const int CHUNK_LENGTH = 10;
 
-    // !!!!! Sort unity objects as children under the ChunkHandler Gameobjects for easy refreshing!
+    private DungeonGenerator dg;
+
+
+    // !!!!! Sort unity objects as children under the ChunkHandler Gameobjects for easy refreshing! ==> oof
     private List<ChunkModel> chunks = new List<ChunkModel>();
 
     // lets just make a list for now (dirty hack, dictionary for later) ==> just saw: materials and prefabs come with names, 
@@ -33,24 +37,22 @@ public class ChunkHandling : MonoBehaviour
     void Start()
     {
 
+        // generate chunks
+        // create the data
+        // create the objects ==> (objects in the scene)
+        // hide everything
+        // only show the stuff that supposed to be seen 
+
         // create first chunk
         ChunkModel firstChunk = new ChunkModel(true, new Vector3(0, 0, 0));
         chunks.Add(firstChunk);
 
+        //BuildChunksArround(firstChunk);
 
-        // create the first locked chunks
-        ChunkModel lockedOne = new ChunkModel(false, new Vector3(10, 0, 0));
-        ChunkModel lockedTwo = new ChunkModel(false, new Vector3(-10, 0, 0));
-        ChunkModel lockedThree = new ChunkModel(false, new Vector3(0, 0, 10));
-        ChunkModel lockedFour = new ChunkModel(false, new Vector3(0, 0, -10));
-
-        chunks.Add(lockedOne);
-        chunks.Add(lockedTwo);
-        chunks.Add(lockedThree);
-        chunks.Add(lockedFour);
+        dg = new DungeonGenerator(firstChunk);
+        chunks = dg.GetDungeon();
 
         RefreshDrawables();
-
     }
 
     // Update is called once per frame
@@ -62,7 +64,7 @@ public class ChunkHandling : MonoBehaviour
 
     private void RefreshDrawables()
     {
-        // maybe this needs more logic, but is ok for now
+        // maybe this needs more logic, but is ok for now ==> the time is now, its need very much more logic, because the game is deleting and creating the exact same object as we generate new chunks => very bad :(
         DeleteDrawables();
         CreateDrawables();
     }
@@ -87,11 +89,12 @@ public class ChunkHandling : MonoBehaviour
         int chunkIndex = 0;
         foreach(ChunkModel nextChunk in chunks)
         {
-            #region CreateBasePlane
+            #region CreateBasePlane aka CHUNK
             GameObject thisChunk = GameObject.CreatePrimitive(PrimitiveType.Plane);
             thisChunk.name = "chunk_" + chunkIndex;
             chunks.Where(x=>x == nextChunk).FirstOrDefault().ChunkIdentifier = "chunk_" + chunkIndex;
             Material groundMat;
+
             if(nextChunk.IsUnlocked == true)
             {
                 groundMat = materials.Where(x => x.name == "grassyGroundMaterial").FirstOrDefault();
@@ -100,26 +103,24 @@ public class ChunkHandling : MonoBehaviour
             {
                 groundMat = materials.Where(x => x.name == "lockedGroundMaterial").FirstOrDefault();
             }
+
             thisChunk.GetComponent<MeshRenderer>().material = groundMat;
-            thisChunk.transform.position = nextChunk.Position;
+            thisChunk.transform.position = new Vector3(nextChunk.Position.x * CHUNK_LENGTH, nextChunk.Position.y, nextChunk.Position.z * CHUNK_LENGTH);
             thisChunk.transform.parent = this.gameObject.transform;
             #endregion
 
             #region PopulatePlaneWithObjects
-            
             if(nextChunk.IsUnlocked == true)
             {
                 int objectIndex = 0;
                 foreach (ChunkObjectModel nextObject in nextChunk.ChunkObjects)
                 {
+                    Vector3 objectPosition = new Vector3(nextChunk.Position.x * CHUNK_LENGTH + nextObject.Position.x, nextChunk.Position.y, nextChunk.Position.z * CHUNK_LENGTH + nextObject.Position.z );
                     string objectNamePrefix = "object_";
-                    // need to think about offsetting the trees, the position inside the tree object is meant as an "on the chunk postion, where the 0,0,0 is the middle of each chunk" => therefore need to consider the chunks world space postion :)
-
                     switch (nextObject.ObjectType)
                     {
                         case ChunkObjectType.TREE:
-                            Vector3 treePos = new Vector3(nextChunk.Position.x + nextObject.Position.x, nextChunk.Position.y + nextObject.Position.y, nextChunk.Position.z + nextObject.Position.z);
-                            GameObject newTree = Instantiate(prefabs.Where(x => x.name == "Tree2").FirstOrDefault(), treePos, Quaternion.identity);
+                            GameObject newTree = Instantiate(prefabs.Where(x => x.name == "Tree2").FirstOrDefault(), objectPosition, Quaternion.identity);
                             newTree.transform.parent = thisChunk.transform;
                             newTree.name = objectNamePrefix + "tree_" + objectIndex;
                             break;
@@ -130,12 +131,8 @@ public class ChunkHandling : MonoBehaviour
             
             #endregion
 
-
-            chunkIndex++; // this is the very end of the creation, before this will come so much more to create the chunks => items, enemies and so on
+            chunkIndex++;
         }
-
-        
-
     }
 
     public void GetChunk(string touchedChunk)
@@ -157,16 +154,9 @@ public class ChunkHandling : MonoBehaviour
             }
         }
 
-        if(chunksToBuildArround.Count != 0)
-        {
-            chunks.RemoveAll(chunk => chunk.IsUnlocked == false);
-        }
-        
-
-
         foreach(ChunkModel centerChunk in chunksToBuildArround)
         {
-            BuildChunksArround(centerChunk);
+            //BuildChunksArround(centerChunk);
         }
 
         
