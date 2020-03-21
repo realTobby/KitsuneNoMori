@@ -64,7 +64,6 @@ public class ChunkHandling : MonoBehaviour
 
     private void RefreshDrawables()
     {
-        // maybe this needs more logic, but is ok for now ==> the time is now, its need very much more logic, because the game is deleting and creating the exact same object as we generate new chunks => very bad :(
         DeleteDrawables();
         CreateDrawables();
     }
@@ -80,12 +79,6 @@ public class ChunkHandling : MonoBehaviour
 
     private void CreateDrawables()
     {
-
-        // this is more complex, needs to go through every chunk and then create the objects of that chunk
-
-        // Chunk Base => Plane (Primitive)
-        // Resources => Prefabs
-        // Enemies => Prefabs
         int chunkIndex = 0;
         foreach(ChunkModel nextChunk in chunks)
         {
@@ -138,9 +131,6 @@ public class ChunkHandling : MonoBehaviour
     public void GetChunk(string touchedChunk)
     {
         DeleteDrawables();
-
-        List<ChunkModel> chunksToBuildArround = new List<ChunkModel>();
-
         foreach(ChunkModel chunk in chunks)
         {
             if (chunk.ChunkIdentifier == touchedChunk)
@@ -148,52 +138,11 @@ public class ChunkHandling : MonoBehaviour
                 if(chunk.IsUnlocked == false)
                 {
                     chunks.Where(x => x == chunk).FirstOrDefault().IsUnlocked = true;
-                    chunksToBuildArround.Add(chunk);
+                    // its fine now, need tweaking later when the object numbers go up, because its still deleting and recreating everything when a new chunk is loaded :/
                     break;
                 }
             }
         }
-
-        foreach(ChunkModel centerChunk in chunksToBuildArround)
-        {
-            //BuildChunksArround(centerChunk);
-        }
-
-        
         RefreshDrawables();
     }
-    
-    private void BuildChunksArround(ChunkModel centerChunk)
-    {
-        Vector3 centerChunkPosition = centerChunk.Position;
-
-        Vector3 leftChunkPosition = new Vector3(centerChunkPosition.x - 10, centerChunkPosition.y, centerChunkPosition.z);
-        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == leftChunkPosition) == false) // :) cool stuff
-        {
-            ChunkModel leftChunk = new ChunkModel(false, leftChunkPosition);
-            chunks.Add(leftChunk);
-        }
-
-        Vector3 rightChunkPosition = new Vector3(centerChunkPosition.x + 10, centerChunkPosition.y, centerChunkPosition.z);
-        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == rightChunkPosition) == false)
-        {
-            ChunkModel rightChunk = new ChunkModel(false, rightChunkPosition);
-            chunks.Add(rightChunk);
-        }
-
-        Vector3 topChunkPosition = new Vector3(centerChunkPosition.x, centerChunkPosition.y, centerChunkPosition.z + 10);
-        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == topChunkPosition) == false)
-        {
-            ChunkModel topChunk = new ChunkModel(false, topChunkPosition);
-            chunks.Add(topChunk);
-        }
-
-        Vector3 bottomChunkPosition = new Vector3(centerChunkPosition.x, centerChunkPosition.y, centerChunkPosition.z - 10);
-        if (chunks.Exists(anyChunkObject => anyChunkObject.Position == bottomChunkPosition) == false)
-        {
-            ChunkModel bottomChunk = new ChunkModel(false, bottomChunkPosition);
-            chunks.Add(bottomChunk);
-        }
-    }
-
 }

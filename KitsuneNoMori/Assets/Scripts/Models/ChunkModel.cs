@@ -41,15 +41,25 @@ namespace Assets.Scripts.Models
             this.isUnlocked = isUnlocked;
             Position = position;
 
-            int treesCount = UnityEngine.Random.Range(10, 25);
+            int objectCount = UnityEngine.Random.Range(2, 6);
 
 
-            for(int tree = 0; tree < treesCount; tree++)
+            for(int objectIndex = 0; objectIndex < objectCount; objectIndex++)
             {
                 ChunkObjectModel newObject = new ChunkObjectModel();
-                newObject.ObjectType = ChunkObjectType.TREE;
-                newObject.Position = new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
-                chunkObjects.Add(newObject);
+
+                int randomObjectType = UnityEngine.Random.Range(1, 7); // exclusive, max is 6
+
+                switch(randomObjectType)
+                {
+                    default: // no other objects yet :D
+                        newObject.ObjectType = ChunkObjectType.TREE;
+                        newObject.Position = new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
+                        chunkObjects.Add(newObject);
+                        break;
+                }
+
+                
             }
 
             
