@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class DestroyableBehaviour : MonoBehaviour
 {
-    private int health = 5;
+    private int maxHits = 5;
     public GameObject woodItemPrefab;
+
+    public void Start()
+    {
+        this.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+    }
+
     void Update()
     {
-        if(health <= 0)
+        if(maxHits <= 0)
         {
             Instantiate(woodItemPrefab, this.transform.position, Quaternion.identity);
 
@@ -18,6 +24,6 @@ public class DestroyableBehaviour : MonoBehaviour
 
     public void SendHit()
     {
-        health--;
+        maxHits--;
     }
 }

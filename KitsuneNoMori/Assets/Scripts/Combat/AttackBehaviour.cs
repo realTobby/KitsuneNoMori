@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AttackBehaviour : MonoBehaviour
 {
-    private const float TIME_FOR_ATTACK_DESTROY = 0.3f;
+    private const float TIME_FOR_ATTACK_DESTROY = 0.5f;
 
     private PlayerBehaviour myPlayerBehaviour;
 
@@ -28,7 +28,7 @@ public class AttackBehaviour : MonoBehaviour
         if (collision.gameObject.tag == "destroyable")
         {
             myPlayerBehaviour.AttackTrigger(collision);
-            Destroy(gameObject);
+            Destroy(gameObject, TIME_FOR_ATTACK_DESTROY);
         }
 
         if (collision.gameObject.tag == "enemy")

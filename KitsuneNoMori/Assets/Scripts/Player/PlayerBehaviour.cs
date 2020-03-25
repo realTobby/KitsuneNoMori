@@ -96,7 +96,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("PLAYER COLLISION");
+        //Debug.Log("PLAYER COLLISION");
         if(collision.gameObject.tag == "chunk")
         {
             if (lastVisitedChunk != collision.gameObject.name)
