@@ -483,6 +483,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 1085241175354006, guid: 9191e921815f6c946a6ec587468d5343, type: 3}
+  - {fileID: 128935683, guid: 8d931b3fb82717949a490ba2479926c4, type: 3}
+  - {fileID: 4622539645269367546, guid: c42aa74ec6695404385b223a7d8b09ed, type: 3}
   materials:
   - {fileID: 2100000, guid: a50b4251e5e21cb49a457487f64be8f7, type: 2}
   - {fileID: 2100000, guid: 0d62e0cf9423ba24881a209306574aff, type: 2}

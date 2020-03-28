@@ -27,17 +27,19 @@ namespace Assets.Scripts
             {
                 return true;
             }
-
             return false;
         }
-
-        public DungeonGenerator(ChunkModel firstChunkOfTheDungeon)
+        /// <summary>
+        /// Constructor of the DungeonGenerator, will create a new dungeon each time a new instance of this class is created 
+        /// </summary>
+        public DungeonGenerator()
         {
-            dungeon.Add(firstChunkOfTheDungeon);
-
             DungeonPointer generatorPointer = DungeonPointer.Left;
             int rooms = 15;
-            Vector3 pointerPosition = firstChunkOfTheDungeon.Position;
+            Vector3 pointerPosition = new Vector3(0,0,0);
+
+            dungeon.Add(new ChunkModel(true, pointerPosition));
+
             for (int roomIndex = 0; roomIndex < rooms; roomIndex++)
             {
                 switch (generatorPointer)
@@ -59,6 +61,10 @@ namespace Assets.Scripts
                 if (CheckNextPosition(pointerPosition) == true)
                 {
                     ChunkModel nextChunk = new ChunkModel(false, pointerPosition);
+                    if(roomIndex >= rooms-1)
+                    {
+                        nextChunk.isEndChunk = true;
+                    }
                     dungeon.Add(nextChunk);
                 }
                 else
@@ -85,11 +91,13 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Retrieves the created dungeon inside the active instance
+        /// </summary>
+        /// <returns></returns>
         public List<ChunkModel> GetDungeon()
         {
             return dungeon;
         }
-
-
     }
 }

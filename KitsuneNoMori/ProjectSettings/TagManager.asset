@@ -9,6 +9,7 @@ TagManager:
   - player
   - attackBuffer
   - destroyable
+  - nextLevelStaircase
   layers:
   - Default
   - TransparentFX

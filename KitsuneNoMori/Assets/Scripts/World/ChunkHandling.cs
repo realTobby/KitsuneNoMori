@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts;
 using Assets.Scripts.Models;
+using Assets.Scripts.World.Destroyables;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,22 +37,14 @@ public class ChunkHandling : MonoBehaviour
     
     void Start()
     {
+        GenerateNextDungeon();
+    }
 
-        // generate chunks
-        // create the data
-        // create the objects ==> (objects in the scene)
-        // hide everything
-        // only show the stuff that supposed to be seen 
-
-        // create first chunk
-        ChunkModel firstChunk = new ChunkModel(true, new Vector3(0, 0, 0));
-        chunks.Add(firstChunk);
-
-        //BuildChunksArround(firstChunk);
-
-        dg = new DungeonGenerator(firstChunk);
+    public void GenerateNextDungeon()
+    {
+        chunks.Clear();
+        dg = new DungeonGenerator();
         chunks = dg.GetDungeon();
-
         RefreshDrawables();
     }
 
@@ -91,11 +84,18 @@ public class ChunkHandling : MonoBehaviour
     private void CreateDrawables(ChunkModel targetedChunk)
     {
         //Debug.Log("When you see this, I will be updating the chunk in question!");
+        #region InitChunk
         GameObject thisChunk = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        thisChunk.transform.localScale = new Vector3(1, 5, 1);
         thisChunk.name = targetedChunk.ChunkIdentifier;
         thisChunk.tag = "chunk";
-        Material groundMat;
+        thisChunk.transform.position = new Vector3(targetedChunk.Position.x * CHUNK_LENGTH, targetedChunk.Position.y, targetedChunk.Position.z * CHUNK_LENGTH);
+        thisChunk.transform.parent = this.gameObject.transform;
 
+        #endregion
+
+        #region MaterialOfChunk
+        Material groundMat;
         if (targetedChunk.IsUnlocked == true)
         {
             groundMat = materials.Where(x => x.name == "grassyGroundMaterial").FirstOrDefault();
@@ -105,10 +105,15 @@ public class ChunkHandling : MonoBehaviour
             groundMat = materials.Where(x => x.name == "lockedGroundMaterial").FirstOrDefault();
         }
 
+        if(targetedChunk.isEndChunk == true)
+        {
+            GameObject nextLevel = Instantiate(prefabs.Where(x => x.name == "staircase").FirstOrDefault(), targetedChunk.Position * CHUNK_LENGTH, Quaternion.identity);
+            nextLevel.transform.parent = thisChunk.transform;
+        }
         thisChunk.GetComponent<MeshRenderer>().material = groundMat;
-        thisChunk.transform.position = new Vector3(targetedChunk.Position.x * CHUNK_LENGTH, targetedChunk.Position.y, targetedChunk.Position.z * CHUNK_LENGTH);
-        thisChunk.transform.parent = this.gameObject.transform;
+        #endregion
 
+        #region PopulateChunkWithObjects
         if (targetedChunk.IsUnlocked == true)
         {
             int objectIndex = 0;
@@ -116,17 +121,30 @@ public class ChunkHandling : MonoBehaviour
             {
                 Vector3 objectPosition = new Vector3(targetedChunk.Position.x * CHUNK_LENGTH + nextObject.Position.x, targetedChunk.Position.y, targetedChunk.Position.z * CHUNK_LENGTH + nextObject.Position.z);
                 string objectNamePrefix = "object_";
+
+                string nextobjectName = "";
+                string prefabName = "";
+                
                 switch (nextObject.ObjectType)
                 {
                     case ChunkObjectType.TREE:
-                        GameObject newTree = Instantiate(prefabs.Where(x => x.name == "Tree2").FirstOrDefault(), objectPosition, Quaternion.identity);
-                        newTree.transform.parent = thisChunk.transform;
-                        newTree.name = objectNamePrefix + "tree_" + objectIndex;
+                        prefabName = "Tree2";
+                        nextobjectName = objectNamePrefix + "tree_" + objectIndex;
+                        break;
+                    case ChunkObjectType.STONE:
+                        prefabName = "Rock1";
+                        nextobjectName = objectNamePrefix + "stone_" + objectIndex;
                         break;
                 }
+
+                GameObject nextChunkObject = Instantiate(prefabs.Where(x => x.name == prefabName).FirstOrDefault(), objectPosition, Quaternion.identity);
+                nextChunkObject.GetComponent<DestroyableBehaviour>().SetObjectData(nextObject);
+                nextChunkObject.transform.parent = thisChunk.transform;
+
                 objectIndex++;
             }
         }
+        #endregion
     }
     #endregion
 
@@ -175,6 +193,5 @@ public class ChunkHandling : MonoBehaviour
         }
     }
     #endregion
-
 
 }

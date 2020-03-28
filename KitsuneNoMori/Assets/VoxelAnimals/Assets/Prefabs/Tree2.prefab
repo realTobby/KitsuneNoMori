@@ -107,5 +107,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53c472824b2978a4f952cefbbae93200, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  woodItemPrefab: {fileID: 2243761540032826746, guid: 58b983fe1a3aeff4fb90b7e17be62fa7,
+  dropObjectPrefab: {fileID: 2243761540032826746, guid: 58b983fe1a3aeff4fb90b7e17be62fa7,
     type: 3}

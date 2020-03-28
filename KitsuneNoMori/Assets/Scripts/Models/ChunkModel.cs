@@ -15,7 +15,8 @@ namespace Assets.Scripts.Models
         private bool isUnlocked = false;
         public string ChunkIdentifier = "";
 
-        
+        public bool isEndChunk = false;
+
         public bool IsUnlocked
         {
             get
@@ -41,7 +42,7 @@ namespace Assets.Scripts.Models
             this.isUnlocked = isUnlocked;
             Position = position;
 
-            int objectCount = UnityEngine.Random.Range(2, 6);
+            int objectCount = UnityEngine.Random.Range(10, 25);
 
 
             for(int objectIndex = 0; objectIndex < objectCount; objectIndex++)
@@ -54,6 +55,16 @@ namespace Assets.Scripts.Models
                 {
                     default: // no other objects yet :D
                         newObject.ObjectType = ChunkObjectType.TREE;
+                        newObject.Position = new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
+                        chunkObjects.Add(newObject);
+                        break;
+                    case 1:
+                        newObject.ObjectType = ChunkObjectType.TREE;
+                        newObject.Position = new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
+                        chunkObjects.Add(newObject);
+                        break;
+                    case 2:
+                        newObject.ObjectType = ChunkObjectType.STONE;
                         newObject.Position = new Vector3(UnityEngine.Random.Range(-5f, 5f), 0, UnityEngine.Random.Range(-5f, 5f));
                         chunkObjects.Add(newObject);
                         break;

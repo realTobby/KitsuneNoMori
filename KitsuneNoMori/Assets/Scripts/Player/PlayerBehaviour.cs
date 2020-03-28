@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Models;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts.World.Destroyables;
 using UnityEngine;
 
 internal enum  PlayerDirection
@@ -92,6 +90,14 @@ public class PlayerBehaviour : MonoBehaviour
             #endregion
 
         }
+
+
+        #region FailSafes
+        if(this.transform.position.y <= -15)
+        {
+            this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.y);
+        }
+        #endregion
     }
 
     void OnCollisionEnter(Collision collision)
@@ -105,10 +111,16 @@ public class PlayerBehaviour : MonoBehaviour
                 lastVisitedChunk = collision.gameObject.name;
             }
         }
+
+        if(collision.gameObject.tag == "nextLevelStaircase")
+        {
+            chunkHandler.GetComponent<ChunkHandling>().GenerateNextDungeon();
+            this.transform.position = new Vector3(0,1,0);
+        }
     }
 
     public void AttackTrigger(Collision hit)
     {
-        hit.gameObject.GetComponent<DestroyableBehaviour>().SendHit();
+        hit.gameObject.GetComponent<DestroyableBehaviour>().destroyableLogic.SendHit();
     }
 }
