@@ -20,10 +20,13 @@ namespace Assets.Scripts.World.Destroyables
 
         void Update()
         {
-            if (destroyableLogic.DropLoot() == true)
+            if(destroyableLogic != null)
             {
-                Instantiate(dropObjectPrefab, this.transform.position, Quaternion.identity);
-                Destroy(gameObject);
+                if (destroyableLogic.DropLoot() == true)
+                {
+                    Instantiate(dropObjectPrefab, this.transform.position, Quaternion.identity);
+                    Destroy(gameObject);
+                }
             }
         }
 

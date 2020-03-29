@@ -16,6 +16,9 @@ public class PlayerBehaviour : MonoBehaviour
     private PlayerDirection playerDirection;
     public GameObject attackHitboxPrefab;
 
+    private float attackOffset = 1f;
+    private float attackYOffset = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,39 +27,37 @@ public class PlayerBehaviour : MonoBehaviour
 
     void Update()
     {
-        if(Input.anyKeyDown)
+        #region Moving/Rotating
+
+        int horizontalIn = (int)Input.GetAxisRaw("Horizontal");
+        int verticalIn = (int)Input.GetAxisRaw("Vertical");
+
+        if (horizontalIn != 0 || verticalIn != 0)
         {
-            #region Moving/Rotating
-
-            int horizontalIn = (int)Input.GetAxisRaw("Horizontal");
-            int verticalIn = (int)Input.GetAxisRaw("Vertical");
-
-            if(horizontalIn != 0 || verticalIn != 0)
+            switch (horizontalIn)
             {
-                switch (horizontalIn)
-                {
-                    case 1:
-                        this.transform.rotation = Quaternion.Euler(0, 90, 0);
-                        playerDirection = PlayerDirection.Left;
-                        break;
-                    case -1:
-                        this.transform.rotation = Quaternion.Euler(0, -90, 0);
-                        playerDirection = PlayerDirection.Right;
-                        break;
-                }
-                switch (verticalIn)
-                {
-                    case 1:
-                        this.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        playerDirection = PlayerDirection.Up;
-                        break;
-                    case -1:
-                        this.transform.rotation = Quaternion.Euler(0, 180, 0);
-                        playerDirection = PlayerDirection.Down;
-                        break;
-                }
+                case 1:
+                    this.transform.rotation = Quaternion.Euler(0, 90, 0);
+                    playerDirection = PlayerDirection.Left;
+                    break;
+                case -1:
+                    this.transform.rotation = Quaternion.Euler(0, -90, 0);
+                    playerDirection = PlayerDirection.Right;
+                    break;
             }
-            #endregion
+            switch (verticalIn)
+            {
+                case 1:
+                    this.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    playerDirection = PlayerDirection.Up;
+                    break;
+                case -1:
+                    this.transform.rotation = Quaternion.Euler(0, 180, 0);
+                    playerDirection = PlayerDirection.Down;
+                    break;
+            }
+        }
+        #endregion
 
             #region Attacking
 
@@ -68,29 +69,26 @@ public class PlayerBehaviour : MonoBehaviour
                 switch (playerDirection)
                 {
                     case PlayerDirection.Left:
-                        attackPos = new Vector3(gameObject.transform.position.x + 0.5f, gameObject.transform.position.y + 0.5f, gameObject.transform.position.z);
+                        attackPos = new Vector3(gameObject.transform.position.x + attackOffset, gameObject.transform.position.y + attackYOffset, gameObject.transform.position.z);
                         newAttack.transform.rotation = Quaternion.Euler(0, 90, 0);
                         break;
                     case PlayerDirection.Right:
-                        attackPos = new Vector3(gameObject.transform.position.x - 0.5f, gameObject.transform.position.y + 0.5f, gameObject.transform.position.z);
+                        attackPos = new Vector3(gameObject.transform.position.x - attackOffset, gameObject.transform.position.y + attackYOffset, gameObject.transform.position.z);
                         newAttack.transform.rotation = Quaternion.Euler(0, 90, 0);
                         break;
                     case PlayerDirection.Up:
-                        attackPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 0.5f, gameObject.transform.position.z + 0.5f);
+                        attackPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + attackYOffset, gameObject.transform.position.z + attackOffset);
                         newAttack.transform.rotation = Quaternion.Euler(0, 0, 0);
                         break;
                     case PlayerDirection.Down:
-                        attackPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 0.5f, gameObject.transform.position.z - 0.5f);
+                        attackPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + attackYOffset, gameObject.transform.position.z - attackOffset);
                         newAttack.transform.rotation = Quaternion.Euler(0, 0, 0);
                         break;
                 }
                 newAttack.transform.position = attackPos;
             }
 
-            #endregion
-
-        }
-
+        #endregion
 
         #region FailSafes
         if(this.transform.position.y <= -15)

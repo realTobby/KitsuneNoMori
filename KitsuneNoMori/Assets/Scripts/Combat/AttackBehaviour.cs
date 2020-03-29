@@ -24,7 +24,7 @@ public class AttackBehaviour : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("A collision");
+        Debug.Log("A collision with " + collision.gameObject.name);
         if (collision.gameObject.tag == "destroyable")
         {
             myPlayerBehaviour.AttackTrigger(collision);
